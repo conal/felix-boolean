@@ -5,4 +5,5 @@ module Felix.Boolean.All where
 
 import Felix.Boolean
 import Felix.Boolean.Homomorphism
+import Felix.Boolean.Comma
 import Felix.Boolean.Function
