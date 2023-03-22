@@ -1,0 +1,41 @@
+\begin{code}[hide]
+{-# OPTIONS --safe --without-K #-}
+open import Level using (Level; Lift; lift)
+
+module Felix.Boolean.Function (ℓ : Level) where
+
+open import Felix.Object
+open import Felix.Raw
+
+open import Felix.Boolean
+\end{code}
+
+\begin{code}[hide]
+module logic-function-instance where instance
+  open import Data.Product using (_,_)
+  open import Felix.Instances.Function ℓ as F using (_⇾_)
+\end{code}
+%<*instances>
+\begin{code}
+  open import Data.Bool as B using (Bool; _∧_; _∨_)
+
+  boolean : Boolean (Set ℓ)
+  boolean = record { 𝔹 = Lift ℓ B.Bool }
+
+  logic : Logic _⇾_
+  logic = record {  false  = lift₀ B.false
+                 ;  true   = lift₀ B.true
+                 ;  not    = lift₁ B.not
+                 ;  nand   = lift₂ λ x y → B.not (x ∧ y)
+                 ;  nor    = lift₂ λ x y → B.not (x ∨ y)
+                 ;  xor    = lift₂ B._xor_
+                 }
+   where
+     lift₀ : B.Bool → (⊤ ⇾ 𝔹)
+     lift₀ b tt = lift b
+     lift₁ : (Bool → Bool) → (𝔹 ⇾ 𝔹)
+     lift₁ f (lift x) = lift (f x)
+     lift₂ : (Bool → Bool → Bool) → (𝔹 × 𝔹 ⇾ 𝔹)
+     lift₂ f (lift x , lift y) = lift (f x y)
+\end{code}
+%</instances>

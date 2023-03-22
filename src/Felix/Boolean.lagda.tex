@@ -1,0 +1,36 @@
+\begin{code}[hide]
+{-# OPTIONS --safe --without-K #-}
+module Felix.Boolean where
+
+open import Level using (_⊔_)
+
+open import Felix.Object
+open import Felix.Raw
+\end{code}
+
+%<*Boolean>
+\begin{code}
+record Boolean {o} (obj : Set o) : Set o where
+  field
+    𝔹 : obj
+open Boolean ⦃ … ⦄ public
+\end{code}
+%</Boolean>
+
+%<*Logic>
+\begin{code}
+record Logic {o} {obj : Set o} ⦃ _ : Products obj ⦄ ⦃ _ : Boolean obj ⦄
+             {ℓ} (_⇨′_ : obj → obj → Set ℓ) : Set (o ⊔ ℓ) where
+  private infix 0 _⇨_; _⇨_ = _⇨′_
+  field
+    false true : ⊤ ⇨ 𝔹
+    not : 𝔹 ⇨ 𝔹
+    nand nor xor : 𝔹 × 𝔹 ⇨ 𝔹
+
+  and or : ⦃ _ : Category _⇨_ ⦄ → 𝔹 × 𝔹 ⇨ 𝔹
+  and  = not ∘ nand
+  or   = not ∘ nor
+
+open Logic ⦃ … ⦄ public
+\end{code}
+%</Logic>
