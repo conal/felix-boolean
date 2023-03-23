@@ -31,6 +31,19 @@ record Logic {o} {obj : Set o} ⦃ _ : Products obj ⦄ ⦃ _ : Boolean obj ⦄
   and  = not ∘ nand
   or   = not ∘ nor
 
+  cond₁ : ⦃ _ : Category _⇨_ ⦄ ⦃ _ : Cartesian _⇨_ ⦄ → 𝔹 × (𝔹 × 𝔹) ⇨ 𝔹
+  -- cond₁ = or ∘ (and ⊗ and) ∘ transpose ∘ first (not ▵ id)
+  cond₁ = nand ∘ (nand ⊗ nand) ∘ transpose ∘ first (not ▵ id)
+  
+  -- (c , (e , t))
+  -- ((not c , c) , (e , t))
+  -- ((not c , e) , (c , t))
+  -- (not c ∧ e) ∨ (c ∧ t)
+
+  -- (not c ∧ e) ∨ (c ∧ t)
+  -- nand (not (not c ∧ e) , not (c ∧ t))
+  -- nand (nand (not c , e) , nand (c , t))
+
 open Logic ⦃ … ⦄ public
 \end{code}
 %</Logic>

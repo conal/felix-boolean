@@ -4,23 +4,28 @@ open import Level using (Level; Lift; lift)
 
 module Felix.Boolean.Function (ℓ : Level) where
 
+open import Data.Bool as B using (Bool; _∧_; _∨_)
+open import Data.Product using (_,_)
+
 open import Felix.Object
 open import Felix.Raw
+open import Felix.Instances.Function ℓ as F using (_⇾_)
 
 open import Felix.Boolean
 \end{code}
 
+\begin{code}
+LBool : Set ℓ
+LBool = Lift ℓ B.Bool
+\end{code}
+
 \begin{code}[hide]
-module logic-function-instance where instance
-  open import Data.Product using (_,_)
-  open import Felix.Instances.Function ℓ as F using (_⇾_)
+module logic-function-instances where instance
 \end{code}
 %<*instances>
 \begin{code}
-  open import Data.Bool as B using (Bool; _∧_; _∨_)
-
   boolean : Boolean (Set ℓ)
-  boolean = record { 𝔹 = Lift ℓ B.Bool }
+  boolean = record { 𝔹 = LBool }
 
   logic : Logic _⇾_
   logic = record {  false  = lift₀ B.false
@@ -31,7 +36,7 @@ module logic-function-instance where instance
                  ;  xor    = lift₂ B._xor_
                  }
    where
-     lift₀ : B.Bool → (⊤ ⇾ 𝔹)
+     lift₀ : Bool → (⊤ ⇾ 𝔹)
      lift₀ b tt = lift b
      lift₁ : (Bool → Bool) → (𝔹 ⇾ 𝔹)
      lift₁ f (lift x) = lift (f x)
@@ -39,3 +44,4 @@ module logic-function-instance where instance
      lift₂ f (lift x , lift y) = lift (f x y)
 \end{code}
 %</instances>
+
