@@ -67,7 +67,7 @@ id-StrongBooleanH = record
 record LogicH
     {obj₁ : Set o₁} (_⇨₁′_ : obj₁ → obj₁ → Set ℓ₁)
     {obj₂ : Set o₂} (_⇨₂′_ : obj₂ → obj₂ → Set ℓ₂)
-    {q} ⦃ _ : Equivalent q _⇨₂′_ ⦄
+    {q} ⦃ eq₂ : Equivalent q _⇨₂′_ ⦄
     ⦃ _ : Boolean obj₁ ⦄ ⦃ _ : Products obj₁ ⦄ ⦃ _ : Logic _⇨₁′_ ⦄
     ⦃ _ : Boolean obj₂ ⦄ ⦃ _ : Products obj₂ ⦄ ⦃ _ : Logic _⇨₂′_ ⦄
     ⦃ _ : Category _⇨₂′_ ⦄ ⦃ _ : Cartesian _⇨₂′_ ⦄
@@ -79,6 +79,7 @@ record LogicH
   : Set (o₁ ⊔ ℓ₁ ⊔ o₂ ⊔ ℓ₂ ⊔ q) where
   private infix 0 _⇨₁_; _⇨₁_ = _⇨₁′_
   private infix 0 _⇨₂_; _⇨₂_ = _⇨₂′_
+  open ≈-Reasoning ⦃ eq₂ ⦄
 
   field
     F-false : Fₘ false ∘ ε ≈ β ∘ false
@@ -92,7 +93,7 @@ record LogicH
            ⦃ _ : StrongBooleanH obj₁ _⇨₂_ ⦄ where
 
     F-false′ : Fₘ false ≈ β ∘ false ∘ ε⁻¹
-    F-false′ = sym (∘-assoc-elimʳ ε∘ε⁻¹) ; ∘≈ˡ F-false ; ∘-assocʳ
+    F-false′ = sym≈ (∘-assoc-elimʳ ε∘ε⁻¹) ; ∘≈ˡ F-false ; ∘-assocʳ
 
     -- F-false′ =
     --   begin
@@ -106,10 +107,10 @@ record LogicH
     --   ∎
 
     F-true′ : Fₘ true ≈ β ∘ true ∘ ε⁻¹
-    F-true′ = sym (∘-assoc-elimʳ ε∘ε⁻¹) ; ∘≈ˡ F-true ; ∘-assocʳ
+    F-true′ = sym≈ (∘-assoc-elimʳ ε∘ε⁻¹) ; ∘≈ˡ F-true ; ∘-assocʳ
 
     F-not′ : Fₘ not ≈ β ∘ not ∘ β⁻¹
-    F-not′ = sym (∘-assoc-elimʳ β∘β⁻¹) ; ∘≈ˡ F-not ; ∘-assocʳ
+    F-not′ = sym≈ (∘-assoc-elimʳ β∘β⁻¹) ; ∘≈ˡ F-not ; ∘-assocʳ
 
     -- F-not′ =
     --   begin
@@ -123,7 +124,7 @@ record LogicH
     --   ∎
 
     F-nand′ : Fₘ nand ≈ β ∘ nand ∘ (β⁻¹ ⊗ β⁻¹) ∘ μ⁻¹
-    F-nand′ = sym (∘-assoc-elimʳ (∘-inverse μ∘μ⁻¹ (⊗-inverse β∘β⁻¹ β∘β⁻¹)))
+    F-nand′ = sym≈ (∘-assoc-elimʳ (∘-inverse μ∘μ⁻¹ (⊗-inverse β∘β⁻¹ β∘β⁻¹)))
             ; ∘≈ˡ F-nand ; ∘-assocʳ
 
     -- F-nand′ : Fₘ nand ≈ β ∘ nand ∘ (β⁻¹ ⊗ β⁻¹) ∘ μ⁻¹
@@ -139,28 +140,29 @@ record LogicH
     --   ∎
 
     F-nor′ : Fₘ nor ≈ β ∘ nor ∘ (β⁻¹ ⊗ β⁻¹) ∘ μ⁻¹
-    F-nor′ = sym (∘-assoc-elimʳ (∘-inverse μ∘μ⁻¹ (⊗-inverse β∘β⁻¹ β∘β⁻¹)))
+    F-nor′ = sym≈ (∘-assoc-elimʳ (∘-inverse μ∘μ⁻¹ (⊗-inverse β∘β⁻¹ β∘β⁻¹)))
            ; ∘≈ˡ F-nor ; ∘-assocʳ
 
     F-xor′ : Fₘ xor ≈ β ∘ xor ∘ (β⁻¹ ⊗ β⁻¹) ∘ μ⁻¹
-    F-xor′ = sym (∘-assoc-elimʳ (∘-inverse μ∘μ⁻¹ (⊗-inverse β∘β⁻¹ β∘β⁻¹)))
+    F-xor′ = sym≈ (∘-assoc-elimʳ (∘-inverse μ∘μ⁻¹ (⊗-inverse β∘β⁻¹ β∘β⁻¹)))
            ; ∘≈ˡ F-xor ; ∘-assocʳ
 
 open LogicH ⦃ … ⦄ public
 
 id-LogicH : {obj : Set o} ⦃ _ : Products obj ⦄ ⦃ _ : Boolean obj ⦄
             {_⇨_ : obj → obj → Set ℓ}
-            {q : Level} ⦃ _ : Equivalent q _⇨_ ⦄
+            {q : Level} ⦃ eq : Equivalent q _⇨_ ⦄
             ⦃ _ :   Category _⇨_ ⦄ ⦃ _ :   Cartesian _⇨_ ⦄ ⦃ _ :   Logic _⇨_ ⦄
             ⦃ _ : L.Category _⇨_ ⦄ ⦃ _ : L.Cartesian _⇨_ ⦄ -- ⦃ _ : L.Logic _⇨_ ⦄
           → LogicH _⇨_ _⇨_ ⦃ Hₒ = id-Hₒ ⦄ ⦃ H = id-H ⦄
                ⦃ pH = id-ProductsH ⦄ ⦃ spH = id-StrongProductsH ⦄
                ⦃ booleanH = id-BooleanH ⦄
-id-LogicH = record
-              { F-false = identityʳ ; sym identityˡ
-              ; F-true  = identityʳ ; sym identityˡ
-              ; F-not   = identityʳ ; sym identityˡ
-              ; F-nand  = elimʳ (identityˡ ; id⊗id) ; sym identityˡ
-              ; F-nor   = elimʳ (identityˡ ; id⊗id) ; sym identityˡ
-              ; F-xor   = elimʳ (identityˡ ; id⊗id) ; sym identityˡ
-              }
+id-LogicH ⦃ eq = eq ⦄ = record
+                          { F-false = identityʳ ; sym≈ identityˡ
+                          ; F-true  = identityʳ ; sym≈ identityˡ
+                          ; F-not   = identityʳ ; sym≈ identityˡ
+                          ; F-nand  = elimʳ (identityˡ ; id⊗id) ; sym≈ identityˡ
+                          ; F-nor   = elimʳ (identityˡ ; id⊗id) ; sym≈ identityˡ
+                          ; F-xor   = elimʳ (identityˡ ; id⊗id) ; sym≈ identityˡ
+                          }
+ where open ≈-Reasoning ⦃ eq ⦄

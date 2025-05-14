@@ -5,16 +5,15 @@ open import Felix.Equiv
 open import Felix.Laws as L
        hiding (Category; Cartesian; CartesianClosed) -- ; Logic; Monoid
 open import Felix.Homomorphism
-open ≈-Reasoning
 open import Felix.Reasoning
 
 module Felix.Boolean.Comma
    {o₀}{obj₀ : Set o₀} {ℓ₀} (_⇨₀_ : obj₀ → obj₀ → Set ℓ₀) ⦃ _ : Category _⇨₀_ ⦄
    {o₁}{obj₁ : Set o₁} {ℓ₁} (_⇨₁_ : obj₁ → obj₁ → Set ℓ₁) ⦃ _ : Category _⇨₁_ ⦄
    {o₂}{obj₂ : Set o₂} {ℓ₂} (_⇨₂_ : obj₂ → obj₂ → Set ℓ₂) ⦃ _ : Category _⇨₂_ ⦄
-   {q₀} ⦃ _ : Equivalent q₀ _⇨₀_ ⦄ ⦃ _ : L.Category _⇨₀_ ⦄
-   {q₁} ⦃ _ : Equivalent q₁ _⇨₁_ ⦄ -- ⦃ _ : L.Category _⇨₁_ ⦄
-   {q₂} ⦃ _ : Equivalent q₂ _⇨₂_ ⦄ -- ⦃ _ : L.Category _⇨₂_ ⦄
+   {q₀} ⦃ eq₀ : Equivalent q₀ _⇨₀_ ⦄ ⦃ _ : L.Category _⇨₀_ ⦄
+   {q₁} ⦃ eq₁ : Equivalent q₁ _⇨₁_ ⦄ -- ⦃ _ : L.Category _⇨₁_ ⦄
+   {q₂} ⦃ eq₂ : Equivalent q₂ _⇨₂_ ⦄ -- ⦃ _ : L.Category _⇨₂_ ⦄
    ⦃ hₒ₁ : Homomorphismₒ obj₁ obj₀ ⦄ ⦃ h₁ : Homomorphism _⇨₁_ _⇨₀_ ⦄
      ⦃ catH₁ : CategoryH _⇨₁_ _⇨₀_ ⦄
    ⦃ hₒ₂ : Homomorphismₒ obj₂ obj₀ ⦄ ⦃ h₂ : Homomorphism _⇨₂_ _⇨₀_ ⦄
@@ -49,6 +48,8 @@ module comma-booleans
 
   open Obj
 
+  open ≈-Reasoning ⦃ eq₀ ⦄
+
   -- false′ : ⊤ ↬ 𝔹
   -- false′ = mkᵐ false false
   --   (begin
@@ -64,7 +65,7 @@ module comma-booleans
   --    -- (β ∘ false ∘ ε⁻¹) ∘ (ε ∘ ε⁻¹)
   --    ≈˘⟨ (∘≈ˡ ∘-assocˡ ; cancelInner ε⁻¹∘ε ; ∘-assocʳ) ⟩
   --     (β ∘ false ∘ ε⁻¹) ∘ (ε ∘ ε⁻¹)
-  --    ≈⟨ ∘≈ˡ (sym F-false′) ⟩
+  --    ≈⟨ ∘≈ˡ (sym≈ F-false′) ⟩
   --     Fₘ false ∘ (ε ∘ ε⁻¹)
   --    ≡⟨⟩
   --     Fₘ false ∘ h ⊤
@@ -75,14 +76,14 @@ module comma-booleans
   false′ = mkᵐ false false
     ( ∘≈ʳ F-false′
     ; ∘-assocˡ′ (∘-assoc-elimʳ β⁻¹∘β)
-    ; sym (∘≈ˡ (F-false′ ; ∘-assocˡ) ; cancelInner ε⁻¹∘ε ; ∘-assocʳ)
+    ; sym≈ (∘≈ˡ (F-false′ ; ∘-assocˡ) ; cancelInner ε⁻¹∘ε ; ∘-assocʳ)
     )
 
   true′ : ⊤ ↬ 𝔹
   true′ = mkᵐ true true
     ( ∘≈ʳ F-true′
     ; ∘-assocˡ′ (∘-assoc-elimʳ β⁻¹∘β)
-    ; sym (∘≈ˡ (F-true′ ; ∘-assocˡ) ; cancelInner ε⁻¹∘ε ; ∘-assocʳ)
+    ; sym≈ (∘≈ˡ (F-true′ ; ∘-assocˡ) ; cancelInner ε⁻¹∘ε ; ∘-assocʳ)
     )
 
   -- not′ = mkᵐ not not
@@ -94,7 +95,7 @@ module comma-booleans
   --      (β ∘ β⁻¹) ∘ (β ∘ not ∘ β⁻¹)
   --    ≈⟨ cancelInner β⁻¹∘β ⟩
   --      β ∘ not ∘ β⁻¹
-  --    ≈⟨ sym (∘-assocˡʳ′ F-not) ⟩
+  --    ≈⟨ sym≈ (∘-assocˡʳ′ F-not) ⟩
   --      Fₘ not ∘ (β ∘ β⁻¹)
   --    ∎)
 
@@ -102,7 +103,7 @@ module comma-booleans
   not′ = mkᵐ not not
     ( ∘≈ʳ F-not′
     ; cancelInner β⁻¹∘β
-    ; sym (∘-assocˡʳ′ F-not)
+    ; sym≈ (∘-assocˡʳ′ F-not)
     )
 
   -- nand′ : 𝔹 × 𝔹 ↬ 𝔹
@@ -115,7 +116,7 @@ module comma-booleans
   --      (β ∘ β⁻¹) ∘ β ∘ nand ∘ (β⁻¹ ⊗ β⁻¹) ∘ μ⁻¹
   --    ≈⟨ ∘-assocˡ′ (∘-assoc-elimʳ β⁻¹∘β) ⟩
   --      β ∘ nand ∘ (β⁻¹ ⊗ β⁻¹) ∘ μ⁻¹
-  --    ≈⟨ ∘-assocˡ′ (sym F-nand) ⟩
+  --    ≈⟨ ∘-assocˡ′ (sym≈ F-nand) ⟩
   --      (Fₘ nand ∘ μ ∘ (β ⊗ β)) ∘ (β⁻¹ ⊗ β⁻¹) ∘ μ⁻¹
   --    ≈⟨ ∘-assocʳ′ ∘-assocʳ ⟩
   --      Fₘ nand ∘ μ ∘ (β ⊗ β) ∘ (β⁻¹ ⊗ β⁻¹) ∘ μ⁻¹
@@ -131,7 +132,7 @@ module comma-booleans
   nand′ = mkᵐ nand nand
           ( ∘≈ʳ F-nand′
           ; ∘-assocˡ′ (∘-assoc-elimʳ β⁻¹∘β)
-          ; ∘-assocˡ′ (sym F-nand)
+          ; ∘-assocˡ′ (sym≈ F-nand)
           ; ∘-assocʳ′ ∘-assocʳ
           ; ∘≈ʳ² (∘-assocˡ′ ⊗∘⊗)
           )
@@ -140,7 +141,7 @@ module comma-booleans
   nor′ = mkᵐ nor nor
           ( ∘≈ʳ F-nor′
           ; ∘-assocˡ′ (∘-assoc-elimʳ β⁻¹∘β)
-          ; ∘-assocˡ′ (sym F-nor)
+          ; ∘-assocˡ′ (sym≈ F-nor)
           ; ∘-assocʳ′ ∘-assocʳ
           ; ∘≈ʳ² (∘-assocˡ′ ⊗∘⊗)
           )
@@ -149,7 +150,7 @@ module comma-booleans
   xor′ = mkᵐ xor xor
             ( ∘≈ʳ F-xor′
             ; ∘-assocˡ′ (∘-assoc-elimʳ β⁻¹∘β)
-            ; ∘-assocˡ′ (sym F-xor)
+            ; ∘-assocˡ′ (sym≈ F-xor)
             ; ∘-assocʳ′ ∘-assocʳ
             ; ∘≈ʳ² (∘-assocˡ′ ⊗∘⊗)
             )
