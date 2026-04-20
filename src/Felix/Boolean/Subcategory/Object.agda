@@ -11,6 +11,7 @@ module Felix.Boolean.Subcategory.Object
   {o ℓ} {obj : Set o}
   (_↠_ : obj → obj → Set ℓ) (let infix 0 _↠_; _↠_ = _↠_)
   ⦃ cat : Category _↠_ ⦄
+  {q : Level} ⦃ _ : Equivalent q _↠_ ⦄
   ⦃ Hₒ : Homomorphismₒ J obj ⦄
  where
 
